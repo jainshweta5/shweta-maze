@@ -1,3 +1,7 @@
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
 import com.shweta.maze.Explorer;
 import com.shweta.maze.FileMazeBuilder;
 import com.shweta.maze.Location;
@@ -7,18 +11,16 @@ import com.shweta.maze.MazeBuilder;
 import com.shweta.maze.MazeUtil;
 
 import java.util.Stack;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
+import static org.hamcrest.Matchers.containsString;
 
 public class ExplorerTest {
 
     private Maze maze;
     private Explorer mazeExplorer;
 
-    @BeforeEach
-    public void setup() {
+    @Before
+    public void before() {
         resetMaze();
     }
 
@@ -27,23 +29,23 @@ public class ExplorerTest {
         try {
             new Explorer(null);
         } catch (IllegalArgumentException e) {
-            Assertions.assertEquals(e.getMessage(), "Maze not provided in explorer");
+            Assert.assertThat(e.getMessage(), containsString("Maze not provided in explorer"));
         }
     }
 
     @Test
     public void testExplorerCanBeDroppedAtStartPoint() {
         Location startLocationInMaze = maze.getStartLocation();
-        Assertions.assertEquals(3, startLocationInMaze.getRow());
-        Assertions.assertEquals(3, startLocationInMaze.getColumn());
+        Assert.assertEquals(3, startLocationInMaze.getRow());
+        Assert.assertEquals(3, startLocationInMaze.getColumn());
 
         mazeExplorer.exploreMaze();
 
         Location startLocationInExploredPath = MazeUtil.getStartLocationFromPath(maze);
-        Assertions.assertEquals(3, startLocationInExploredPath.getRow());
-        Assertions.assertEquals(3, startLocationInExploredPath.getColumn());
+        Assert.assertEquals(3, startLocationInExploredPath.getRow());
+        Assert.assertEquals(3, startLocationInExploredPath.getColumn());
 
-        Assertions.assertEquals(startLocationInExploredPath, startLocationInMaze);
+        Assert.assertEquals(startLocationInExploredPath, startLocationInMaze);
     }
 
     @Test
@@ -58,7 +60,7 @@ public class ExplorerTest {
     		 	break;
     		}
     	}
-        Assertions.assertEquals(false, isWalled);
+    	Assert.assertEquals(false, isWalled);
     }
     
     @Test
@@ -66,16 +68,16 @@ public class ExplorerTest {
         TestUtil.setExitLocation(maze.getLocations(), maze.getExitLocation(), 5, 11, LocationState.WALLED);
         mazeExplorer.exploreMaze();
 
-        Assertions.assertEquals(11, maze.getPath().getPathLocations().size());
-        Assertions.assertTrue(maze.getPath().getPathLocations().contains(new Location(3, 11, LocationState.OPEN))); // last straight location
-        Assertions.assertTrue(maze.getPath().getPathLocations().contains(new Location(4, 11, LocationState.OPEN))); // first location after turned.
+        Assert.assertEquals(11, maze.getPath().getPathLocations().size());
+        Assert.assertTrue(maze.getPath().getPathLocations().contains(new Location(3, 11, LocationState.OPEN))); // last straight location
+        Assert.assertTrue(maze.getPath().getPathLocations().contains(new Location(4, 11, LocationState.OPEN))); // first location after turned.
     }
 
     @Test
     public void testExplorerKeepsRecordOfExploredPath() {
     	mazeExplorer.exploreMaze();
-        Assertions.assertNotNull(mazeExplorer.getExplored());
-        Assertions.assertTrue(mazeExplorer.getExplored().length > 0);
+        Assert.assertNotNull(mazeExplorer.getExplored());
+        Assert.assertTrue(mazeExplorer.getExplored().length > 0);
     }
 
 
